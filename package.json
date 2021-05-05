@@ -7,7 +7,13 @@
       "ts-node": "3.3.0",
       "typescript": "3.3.3333"
    },
+   "engines": {
+      "node": "14.x"
+    },
    "dependencies": {
+      "@types/node": "^8.0.29",
+      "ts-node": "3.3.0",
+      "typescript": "3.3.3333",
       "@admin-bro/express": "^3.1.0",
       "admin-bro": "^4.0.1",
       "admin-bro-expressjs": "^2.1.1",
