@@ -24,6 +24,7 @@ router.post('/create-account', createUserValidator, async (req, res) => {
         where: [{ email: body.email }]
     })
 
+    
     if (userResult.length > 0) {
         res.status(401).send("User email already exists");
     } else {
