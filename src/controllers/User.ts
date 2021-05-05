@@ -3,7 +3,7 @@ import { createUserValidator } from "../validators/user"
 var jwt = require('jsonwebtoken');
 import { Token } from "../entity/Token"
 import { authMiddleware } from "../middlewares/auth";
-import {  getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 
 var express = require('express')
 var router = express.Router()
@@ -28,11 +28,11 @@ router.get('/@me', authMiddleware, async (req, res, next) => {
         }
     })
 
-    if(userResult.length > 0){
+    if (userResult.length > 0) {
         delete userResult[0].googleId;
         const tokenVal = userResult[0].token.token;
         delete userResult[0].token
-        res.status(200).send({user: userResult[0], token: tokenVal});
+        res.status(200).send({ user: userResult[0], token: tokenVal });
     }
     else res.status(404).send("User data not found!")
 })
@@ -48,13 +48,23 @@ router.post('/create-account', createUserValidator, async (req, res) => {
         res.status(401).send("User email already exists");
     } else {
         try {
-
             const user = new User();
+            var fullName;
+            if (body.givenName) {
+                fullName = body.givenName;
+            }
+            if (body.familyName) {
+                if (body.givenName) {
+                    fullName = fullName + "+" + body.familyName;
+                } else {
+                    fullName = body.familyName
+                }
+            }
             user.firstName = body.givenName;
             user.lastName = body.familyName ? body.familyName : '';
             user.email = body.email;
             user.googleId = body.googleId;
-            user.profile_pic = body.imageUrl ? body.imageUrl : ' ';
+            user.profile_pic = body.imageUrl ? body.imageUrl : `https://ui-avatars.com/api/?name=${fullName}&size=500`;
             user.save();
 
             const tok = jwt.sign({ email: body.email, googleId: body.googleId }, process.env.SECRET_KEY);
@@ -62,6 +72,7 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             token.token = tok;
             token.user = user;
             token.save()
+            console.log("Here we are")
             res.status(201).send({ user: user, token: tok });
         } catch (e) {
             console.log("LOL");
