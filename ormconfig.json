@@ -8,6 +8,12 @@
    "synchronize": true,
    "insecureAuth": true,
    "logging": false,
+   "ssl": true,
+   "extra": {
+      "ssl": {
+         "rejectUnauthorized": false
+      }
+   },
    "entities": [
       "src/entity/**/*.ts"
    ],
