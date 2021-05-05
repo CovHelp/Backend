@@ -14,27 +14,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/@me', authMiddleware, async (req, res, next) => {
-    console.log("Fetching user data");
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-    const userRepo = getRepository(User);
-    const userResult = await userRepo.find({
-        where: [{ email: decodedToken.email }],
-        join: {
-            alias: 'user',
-            leftJoinAndSelect: {
-                token: "user.token"
-            }
-        }
-    })
-
-    if (userResult.length > 0) {
-        delete userResult[0].googleId;
-        const tokenVal = userResult[0].token.token;
-        delete userResult[0].token
-        res.status(200).send({ user: userResult[0], token: tokenVal });
-    }
-    else res.status(404).send("User data not found!")
+    res.status(200).send(req.userData)
 })
 
 router.post('/create-account', createUserValidator, async (req, res) => {
@@ -72,10 +52,9 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             token.token = tok;
             token.user = user;
             token.save()
-            console.log("Here we are")
             res.status(201).send({ user: user, token: tok });
         } catch (e) {
-            console.log("LOL");
+            res.status(500).send(e.toString())
         }
     }
 })

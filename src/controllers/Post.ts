@@ -49,6 +49,10 @@ router.get('/need-help-post/:id', async (req, res) => {
     }
 })
 
+router.post('/create-need-help-post', authMiddleware, async (req, res) => {
+    
+})
+
 router.get('/provide-help-posts', async (req, res) => {
     try {
         const postRepo = getRepository(ProvideHelp);
@@ -68,7 +72,6 @@ router.get('/provide-help-posts', async (req, res) => {
         res.send(e.toSting());
     }
 })
-
 
 router.get('/provide-help-post/:id', async (req, res) => {
     try {
