@@ -3,6 +3,7 @@ import { NeedHelp } from "../entity/NeedHelp"
 import { NeedHelpLocation } from "../entity/NeedHelpLocation"
 import { ProvideHelp } from "../entity/ProvideHelp"
 import {authMiddleware} from '../middlewares/auth'
+import { createNeedHelpPostValidator } from "../validators/post"
 
 var express = require('express')
 var router = express.Router()
@@ -53,19 +54,10 @@ router.get('/need-help-post/:id', async (req, res) => {
 })
 
 
-router.post('/create-need-help-post', authMiddleware, async (req, res) => {
+router.post('/create-need-help-post', authMiddleware, createNeedHelpPostValidator, async (req, res) => {
     const body = req.body;
     const userData = req.userData;
 
-    const needHelp = new NeedHelp()
-    needHelp.body = body.body;
-    needHelp.category = body.category;
-    needHelp.phoneNumber = body.phoneNumber;
-    needHelp.isPhoneNumberPublic = body.isPhoneNumberPublic;
-    needHelp.urgency = body.urgency;
-    needHelp.user = userData.user;
-    needHelp.isClosed = false;
-    needHelp.picture = body.picture;
     const location = new NeedHelpLocation()
     location.city = body.city;
     location.state = body.state;
@@ -73,7 +65,20 @@ router.post('/create-need-help-post', authMiddleware, async (req, res) => {
     location.long = body.long;
     location.country = "IN";
     location.save()
+
+    const needHelp = new NeedHelp()
+    needHelp.body = body.body;
+    needHelp.category = body.category;
+    needHelp.phoneNumber = body.phoneNumber;
+    needHelp.isPhoneNumberPublic = body.isPhoneNumberPublic;
+    needHelp.urgency = body.urgency;
+    needHelp.isClosed = false;
+    needHelp.picture = body.picture;
+
+    // setting relationship
     needHelp.location = location;
+    needHelp.user = userData.user;
+
     needHelp.save()
     res.status(200).send(needHelp);
 })
