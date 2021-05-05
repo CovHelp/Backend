@@ -3,9 +3,6 @@ import { Base } from "./Base";
 
 export abstract class Post extends Base {
     @Column()
-    type: number;
-
-    @Column()
     urgency: number;
 
     @Column()
@@ -18,7 +15,7 @@ export abstract class Post extends Base {
     category: number;
 
     @Column()
-    phoneNumber: number;
+    phoneNumber: string;
 
     @Column()
     isPhoneNumberPublic: boolean;

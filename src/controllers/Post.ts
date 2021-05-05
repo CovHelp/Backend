@@ -1,5 +1,6 @@
 import { getRepository } from "typeorm"
 import { NeedHelp } from "../entity/NeedHelp"
+import { NeedHelpLocation } from "../entity/NeedHelpLocation"
 import { ProvideHelp } from "../entity/ProvideHelp"
 import {authMiddleware} from '../middlewares/auth'
 
@@ -20,6 +21,7 @@ router.get('/need-help-posts', async (req, res) => {
                 leftJoinAndSelect: {
                     user: "needhelp.user",
                     comments: "needhelp.comments",
+                    location: "needhelp.location",
                 }
             }
         })
@@ -39,7 +41,8 @@ router.get('/need-help-post/:id', async (req, res) => {
                 leftJoinAndSelect: {
                     user: "needhelp.user",
                     comments: "needhelp.comments",
-                    location: "needhelp.location"
+                    location: "needhelp.location",
+                    
                 }
             }
         })
@@ -47,6 +50,32 @@ router.get('/need-help-post/:id', async (req, res) => {
     } catch (e) {
         res.send(e.toString());
     }
+})
+
+
+router.post('/create-need-help-post', authMiddleware, async (req, res) => {
+    const body = req.body;
+    const userData = req.userData;
+
+    const needHelp = new NeedHelp()
+    needHelp.body = body.body;
+    needHelp.category = body.category;
+    needHelp.phoneNumber = body.phoneNumber;
+    needHelp.isPhoneNumberPublic = body.isPhoneNumberPublic;
+    needHelp.urgency = body.urgency;
+    needHelp.user = userData.user;
+    needHelp.isClosed = false;
+    needHelp.picture = body.picture;
+    const location = new NeedHelpLocation()
+    location.city = body.city;
+    location.state = body.state;
+    location.lat = body.lat;
+    location.long = body.long;
+    location.country = "IN";
+    location.save()
+    needHelp.location = location;
+    needHelp.save()
+    res.status(200).send(needHelp);
 })
 
 router.get('/provide-help-posts', async (req, res) => {

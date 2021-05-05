@@ -13,8 +13,8 @@ export abstract class Location extends Base{
     city: string;
 
     @Column()
-    lat: number
+    lat: string
 
     @Column()
-    long: number;
+    long: string;
 }

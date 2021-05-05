@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Comment } from "./Comment";
 import { Post } from "./base/Post";
 import { User } from "./User";
@@ -15,7 +15,7 @@ export class NeedHelp extends Post {
     @JoinColumn()
     user: User;
 
-    @ManyToOne(() => NeedHelpLocation, needHelpLocation => needHelpLocation.needHelpPost)
+    @OneToOne(() => NeedHelpLocation, needHelpLocation => needHelpLocation.needHelpPost)
     @JoinColumn()
     location: NeedHelpLocation;
 }
