@@ -1,0 +1,32 @@
+{
+   "name": "backend",
+   "version": "0.0.1",
+   "description": "Awesome project developed with TypeORM.",
+   "devDependencies": {
+      "@types/node": "^8.0.29",
+      "ts-node": "3.3.0",
+      "typescript": "3.3.3333"
+   },
+   "dependencies": {
+      "@admin-bro/express": "^3.1.0",
+      "admin-bro": "^4.0.1",
+      "admin-bro-expressjs": "^2.1.1",
+      "admin-bro-typeorm": "^0.1.6-alpha.9",
+      "class-validator": "^0.13.1",
+      "dotenv": "^8.5.1",
+      "express": "^4.17.1",
+      "express-formidable": "^1.2.0",
+      "express-session": "^1.17.1",
+      "express-validator": "^6.10.1",
+      "googleapis": "^73.0.0",
+      "jsonwebtoken": "^8.5.1",
+      "nodemon": "^2.0.7",
+      "pg": "^8.4.0",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.2.32"
+   },
+   "scripts": {
+      "start": "nodemon -w src --ext ts --exec ts-node src/index.ts",
+      "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
+   }
+}
