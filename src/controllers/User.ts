@@ -18,15 +18,26 @@ router.get('/@me', authMiddleware, async (req, res, next) => {
 })
 
 router.post('/create-account', createUserValidator, async (req, res) => {
+    console.log("Creating new user record");
     const body = req.body
     const userRepo = getRepository(User);
     const userResult = await userRepo.find({
-        where: [{ email: body.email }]
+        where: [{ email: body.email }],
+        join: {
+            alias: 'user',
+            leftJoinAndSelect: {
+                token: 'user.token'
+            }
+        }
     })
-
     
     if (userResult.length > 0) {
-        res.status(401).send("User email already exists");
+        //console.log(userResult[0])
+        delete userResult[0].googleId;
+        delete userResult[0].token.createdAt;
+        delete userResult[0].token.updatedAt;
+
+        res.status(201).send(userResult[0]);
     } else {
         try {
 
@@ -43,6 +54,8 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             token.token = tok;
             token.user = user;
             token.save()
+            delete user.googleId;
+            
             res.status(201).send({ user: user, token: tok });
         } catch (e) {
             console.log("LOL");

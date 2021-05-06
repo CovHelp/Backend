@@ -9,16 +9,15 @@
    },
    "engines": {
       "node": "14.x"
-    },
+   },
    "dependencies": {
-      "@types/node": "^8.0.29",
-      "ts-node": "3.3.0",
-      "typescript": "3.3.3333",
       "@admin-bro/express": "^3.1.0",
+      "@types/node": "^8.0.29",
       "admin-bro": "^4.0.1",
       "admin-bro-expressjs": "^2.1.1",
       "admin-bro-typeorm": "^0.1.6-alpha.9",
       "class-validator": "^0.13.1",
+      "cors": "^2.8.5",
       "dotenv": "^8.5.1",
       "express": "^4.17.1",
       "express-formidable": "^1.2.0",
@@ -29,7 +28,9 @@
       "nodemon": "^2.0.7",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.10",
-      "typeorm": "0.2.32"
+      "ts-node": "3.3.0",
+      "typeorm": "0.2.32",
+      "typescript": "3.3.3333"
    },
    "scripts": {
       "start": "nodemon -w src --ext ts --exec ts-node src/index.ts",

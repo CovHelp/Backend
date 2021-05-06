@@ -1,5 +1,6 @@
 // Express
 import * as express from "express";
+var cors = require('cors')
 // TypeORM
 import "reflect-metadata";
 import { createConnection } from "typeorm";
@@ -74,6 +75,7 @@ AdminBro.registerAdapter({ Database, Resource });
 
 
 const app = express();
+app.use(cors())
 
 async function main() {
     const connection = await createConnection();
