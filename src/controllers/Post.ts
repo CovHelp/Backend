@@ -34,7 +34,6 @@ router.get('/need-help-posts', async (req, res) => {
 
 router.post('/user-need-help-posts', authMiddleware, async (req, res) => {
     const userData = req.userData;
-    console.log(userData)
     try {
         const postRepo = getRepository(NeedHelp);
         const result = await postRepo.find({
@@ -147,10 +146,26 @@ router.get('/provide-help-post/:id', async (req, res) => {
     }
 })
 
-router.post('/create-need-help-post', authMiddleware, (req, res) => {
-    console.log(req.headers.authorization)
-    res.send('LOL')
-});
+router.post('/user-provide-help-posts', authMiddleware, async (req, res) => {
+    const userData = req.userData;
+    try {
+        const postRepo = getRepository(ProvideHelp);
+        const result = await postRepo.find({
+            where: [{ user: userData.user.id }],
+            join: {
+                alias: "ProvideHelp",
+                leftJoinAndSelect: {
+                    user: "ProvideHelp.user",
+                    comments: "ProvideHelp.comments",
+                    location: "ProvideHelp.location",
+                }
+            }
+        })
+        res.send(result)
+    } catch (e) {
+        res.send(e.toString());
+    }
+})
 
 router.post('/create-provide-help-post', (req, res) => {
 
