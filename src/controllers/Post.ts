@@ -32,6 +32,27 @@ router.get('/need-help-posts', async (req, res) => {
     }
 })
 
+router.post('/user-need-help-posts', authMiddleware, async (req, res) => {
+    const userData = req.userData;
+    try {
+        const postRepo = getRepository(NeedHelp);
+        const result = await postRepo.find({
+            where: [{ user: userData.user.id }],
+            join: {
+                alias: "needhelp",
+                leftJoinAndSelect: {
+                    user: "needhelp.user",
+                    comments: "needhelp.comments",
+                    location: "needhelp.location",
+                }
+            }
+        })
+        res.send(result)
+    } catch (e) {
+        res.send(e.toString());
+    }
+})
+
 router.get('/need-help-post/:id', async (req, res) => {
     try {
         const postRepo = getRepository(NeedHelp);
