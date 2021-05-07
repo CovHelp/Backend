@@ -172,7 +172,7 @@ router.post('/user-provide-help-posts', authMiddleware, async (req, res) => {
                 leftJoinAndSelect: {
                     user: "ProvideHelp.user",
                     comments: "ProvideHelp.comments",
-                    locations: "providehelp.locations"
+                    locations: "ProvideHelp.locations"
                 }
             }
         })
