@@ -189,10 +189,10 @@ router.post('/create-provide-help-post', authMiddleware, (req, res) => {
 
     for (var i = 0; i < body.locations.length; i++) {
         const location = new ProvideHelpLocation()
-        location.city = body.locations[i].city;
-        location.state = body.locations[i].state;
-        location.lat = body.locations[i].latitude;
-        location.long = body.locations[i].longitude;
+        location.city = body.locations[i].city.name;
+        location.state = body.locations[i].state.name;
+        location.lat = body.locations[i].city.latitude;
+        location.long = body.locations[i].city.longitude;
         location.country = "IN";
         location.provideHelp = provideHelp;
         location.save()
@@ -203,3 +203,5 @@ router.post('/create-provide-help-post', authMiddleware, (req, res) => {
 });
 
 module.exports = router
+
+
