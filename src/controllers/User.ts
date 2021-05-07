@@ -55,9 +55,12 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             token.user = user;
             token.save()
 
-            var userResponse = user;
-            delete userResponse.googleId;
-            
+            var userResponse = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                profile_pic: user.profile_pic
+            };            
             res.status(201).send({ user: userResponse, token: tok });
         } catch (e) {
             console.log("LOL");
