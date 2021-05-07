@@ -18,6 +18,9 @@ router.get('/need-help-posts', async (req, res) => {
     try {
         const postRepo = getRepository(NeedHelp);
         const result = await postRepo.find({
+            order: {
+                'createdAt': 'ASC',
+            },
             join: {
                 alias: "needhelp",
                 leftJoinAndSelect: {
@@ -25,7 +28,8 @@ router.get('/need-help-posts', async (req, res) => {
                     comments: "needhelp.comments",
                     location: "needhelp.location",
                 }
-            }
+            },
+            
         })
         res.send(result)
     } catch (e) {
@@ -109,6 +113,9 @@ router.get('/provide-help-posts', async (req, res) => {
     try {
         const postRepo = getRepository(ProvideHelp);
         const result = await postRepo.find({
+            order: {
+                'createdAt': 'ASC',
+            },
             join: {
                 alias: "providehelp",
                 leftJoinAndSelect: {
