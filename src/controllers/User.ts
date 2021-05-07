@@ -36,8 +36,10 @@ router.post('/create-account', createUserValidator, async (req, res) => {
         delete userResult[0].googleId;
         delete userResult[0].token.createdAt;
         delete userResult[0].token.updatedAt;
-
-        res.status(201).send(userResult[0]);
+        const user = userResult[0];
+        delete user.token;
+        const response = {user: user, token: userResult[0].token};
+        res.status(201).send(response);
     } else {
         try {
 
