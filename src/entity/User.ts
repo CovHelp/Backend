@@ -7,7 +7,7 @@ import { ProvideHelp } from "./ProvideHelp";
 import { Token } from "./Token";
 import { isEmail } from "class-validator";
 
-@Entity()
+@Entity({name: 'users'})
 export class User extends Base {
     @Column()
     googleId: string;
