@@ -19,7 +19,7 @@ router.get('/need-help-posts', async (req, res) => {
         const postRepo = getRepository(NeedHelp);
         const result = await postRepo.find({
             order: {
-                'createdAt': 'ASC',
+                'createdAt': 'DESC',
             },
             join: {
                 alias: "needhelp",
@@ -42,6 +42,9 @@ router.post('/user-need-help-posts', authMiddleware, async (req, res) => {
     try {
         const postRepo = getRepository(NeedHelp);
         const result = await postRepo.find({
+            order: {
+                'createdAt': 'DESC',
+            },
             where: [{ user: userData.user.id }],
             join: {
                 alias: "needhelp",
@@ -114,7 +117,7 @@ router.get('/provide-help-posts', async (req, res) => {
         const postRepo = getRepository(ProvideHelp);
         const result = await postRepo.find({
             order: {
-                'createdAt': 'ASC',
+                'createdAt': 'DESC',
             },
             join: {
                 alias: "providehelp",
