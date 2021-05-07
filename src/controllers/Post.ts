@@ -34,6 +34,7 @@ router.get('/need-help-posts', async (req, res) => {
 
 router.post('/user-need-help-posts', authMiddleware, async (req, res) => {
     const userData = req.userData;
+    console.log(userData)
     try {
         const postRepo = getRepository(NeedHelp);
         const result = await postRepo.find({
