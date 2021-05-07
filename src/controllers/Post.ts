@@ -191,8 +191,8 @@ router.post('/create-provide-help-post', authMiddleware, (req, res) => {
         const location = new ProvideHelpLocation()
         location.city = body.locations[i].city;
         location.state = body.locations[i].state;
-        location.lat = body.locations[i].lat;
-        location.long = body.locations[i].long;
+        location.lat = body.locations[i].latitude;
+        location.long = body.locations[i].longitude;
         location.country = "IN";
         location.provideHelp = provideHelp;
         location.save()
