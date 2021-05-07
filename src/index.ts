@@ -1,12 +1,14 @@
 // Express
 import * as express from "express";
 var cors = require('cors')
+const fileUpload = require('express-fileupload');
+
 // TypeORM
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { Database, Resource } from "admin-bro-typeorm";
-const AdminBro = require('admin-bro')
-const AdminBroExpress = require('@admin-bro/express')
+//import { Database, Resource } from "admin-bro-typeorm";
+//const AdminBro = require('admin-bro')
+//const AdminBroExpress = require('@admin-bro/express')
 import { validate } from 'class-validator'
 import { User } from "./entity/User";
 import { NeedHelp } from "./entity/NeedHelp";
@@ -15,8 +17,8 @@ require('dotenv').config()
 
 
 
-Resource.validate = validate;
-AdminBro.registerAdapter({ Database, Resource });
+//Resource.validate = validate;
+//AdminBro.registerAdapter({ Database, Resource });
 
 
 // const createPost = async (connection) => {
@@ -75,19 +77,22 @@ AdminBro.registerAdapter({ Database, Resource });
 
 
 const app = express();
+
 app.use(cors())
+app.use(fileUpload());
+
 
 async function main() {
     const connection = await createConnection();
-    const adminBro = new AdminBro({
-        databases: [connection],
-        rootPath: '/admin',
-    })
-    const router = AdminBroExpress.buildRouter(adminBro)
+    // const adminBro = new AdminBro({
+    //   databases: [connection],
+    //  rootPath: '/admin',
+    //  })
+    //const router = AdminBroExpress.buildRouter(adminBro)
     // comment the below line in prod
     //  createPost(connection);
     //  createProvideHelpPost(connection);
-    app.use('/admin', router)
+    // app.use('/admin', router)
     // comment line end
 
     app.use(express.json());
