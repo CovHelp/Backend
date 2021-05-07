@@ -2,7 +2,8 @@ import { getRepository } from "typeorm"
 import { NeedHelp } from "../entity/NeedHelp"
 import { NeedHelpLocation } from "../entity/NeedHelpLocation"
 import { ProvideHelp } from "../entity/ProvideHelp"
-import {authMiddleware} from '../middlewares/auth'
+import { ProvideHelpLocation } from "../entity/ProvideHelpLocation"
+import { authMiddleware } from '../middlewares/auth'
 import { createNeedHelpPostValidator } from "../validators/post"
 
 var express = require('express')
@@ -64,7 +65,7 @@ router.get('/need-help-post/:id', async (req, res) => {
                     user: "needhelp.user",
                     comments: "needhelp.comments",
                     location: "needhelp.location",
-                    
+
                 }
             }
         })
@@ -114,13 +115,14 @@ router.get('/provide-help-posts', async (req, res) => {
                     user: "providehelp.user",
                     comments: "providehelp.comments",
                     upvotes: "providehelp.upvotes",
-                    appreciations: "providehelp.appreciations"
+                    appreciations: "providehelp.appreciations",
+                    locations: "providehelp.locations"
                 }
             }
         });
         res.send(result);
     } catch (e) {
-        res.send(e.toSting());
+        res.send(e.toString());
     }
 })
 
@@ -167,8 +169,37 @@ router.post('/user-provide-help-posts', authMiddleware, async (req, res) => {
     }
 })
 
-router.post('/create-provide-help-post', (req, res) => {
+router.post('/create-provide-help-post', authMiddleware, (req, res) => {
+    const body = req.body;
+    const userData = req.userData;
 
+    const provideHelp = new ProvideHelp()
+    provideHelp.body = body.body;
+    provideHelp.category = body.category;
+    provideHelp.phoneNumber = body.phoneNumber;
+    provideHelp.isPhoneNumberPublic = body.isPhoneNumberPublic;
+    provideHelp.urgency = body.urgency;
+    provideHelp.isClosed = false;
+    provideHelp.picture = body.picture;
+
+    // setting relationship
+    provideHelp.user = userData.user;
+
+    provideHelp.save()
+
+    for (var i = 0; i < body.locations.length; i++) {
+        const location = new ProvideHelpLocation()
+        location.city = body.locations[i].city;
+        location.state = body.locations[i].state;
+        location.lat = body.locations[i].lat;
+        location.long = body.locations[i].long;
+        location.country = "IN";
+        location.provideHelp = provideHelp;
+        location.save()
+    }
+
+
+    res.status(200).send(provideHelp);
 });
 
 module.exports = router

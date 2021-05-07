@@ -25,7 +25,7 @@ export class ProvideHelp extends Post {
     @JoinColumn()
     comments: Comment
 
-    @ManyToMany(() => ProvideHelpLocation, provideHelpLocation => provideHelpLocation.provideHelp)
+    @OneToMany(() => ProvideHelpLocation, provideHelpLocation => provideHelpLocation.provideHelp)
     @JoinColumn()
     locations: ProvideHelpLocation;
 }
