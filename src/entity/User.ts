@@ -9,7 +9,7 @@ import { isEmail } from "class-validator";
 
 @Entity({name: 'users'})
 export class User extends Base {
-    @Column()
+    @Column({nullable: false})
     googleId: string;
 
     @Column()
