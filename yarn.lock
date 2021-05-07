@@ -2146,6 +2146,11 @@ cosmiconfig@^6.0.0:
     path-type "^4.0.0"
     yaml "^1.7.2"
 
+country-state-city@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/country-state-city/-/country-state-city-2.1.0.tgz#136e23beabfc60a45d27eba0def59a0f45331fa3"
+  integrity sha512-hnPibejCjcy7ONiKy1tT0BhRWHzlqMG+vJn713w5p01BssJTwq6/JJ04raorGQHTQbGuBG3dW9AAhnAqzCMkXQ==
+
 crypto-random-string@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-2.0.0.tgz#ef2a7a966ec11083388369baa02ebead229b30d5"
