@@ -163,13 +163,16 @@ router.post('/user-provide-help-posts', authMiddleware, async (req, res) => {
     try {
         const postRepo = getRepository(ProvideHelp);
         const result = await postRepo.find({
+            order: {
+                'createdAt': 'DESC',
+            },
             where: [{ user: userData.user.id }],
             join: {
                 alias: "ProvideHelp",
                 leftJoinAndSelect: {
                     user: "ProvideHelp.user",
                     comments: "ProvideHelp.comments",
-                    location: "ProvideHelp.location",
+                    locations: "providehelp.locations"
                 }
             }
         })
