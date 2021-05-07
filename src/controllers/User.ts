@@ -32,13 +32,18 @@ router.post('/create-account', createUserValidator, async (req, res) => {
     })
     
     if (userResult.length > 0) {
-        //console.log(userResult[0])
+
         delete userResult[0].googleId;
         delete userResult[0].token.createdAt;
         delete userResult[0].token.updatedAt;
-        const user = userResult[0];
-        delete user.token;
-        const response = {user: user, token: userResult[0].token};
+        var userResponse = {
+            firstName: userResult[0].firstName,
+            lastName: userResult[0].lastName,
+            email: userResult[0].email,
+            profile_pic: userResult[0].profile_pic
+        };  
+        
+        const response = {user: userResponse, token: userResult[0].token};
         res.status(201).send(response);
     } else {
         try {
