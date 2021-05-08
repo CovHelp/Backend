@@ -7,6 +7,8 @@ import { authMiddleware } from '../middlewares/auth'
 import { createNeedHelpPostValidator, createProvideHelpPostValidator } from "../validators/post"
 import { v4 as uuidv4 } from 'uuid';
 import { Comment } from "../entity/Comment"
+import { Upvote } from "../entity/Upvote"
+import { Appreciate } from "../entity/Appreciate"
 
 var express = require('express')
 var router = express.Router()
@@ -152,6 +154,13 @@ router.post('/create-need-help-post', authMiddleware, createNeedHelpPostValidato
     res.status(200).send(needHelp);
 })
 
+
+
+
+
+
+// PROVIDE HELP POSTS CONTROLLERS
+
 router.get('/provide-help-posts', async (req, res) => {
     try {
         const postRepo = getRepository(ProvideHelp);
@@ -294,6 +303,32 @@ router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostVa
     res.status(200).send(provideHelp);
 });
 
+
+router.post('/upvote/:id', authMiddleware, (req, res) => {
+    try{
+    const userData = req.userData;
+    const upvote = new Upvote()
+    upvote.user = userData.user;
+    upvote.providehelp = req.params.id;
+    upvote.save();
+    res.status(200).send(upvote);
+    }catch(e){
+        res.staus(500).send(e.toString())
+    }
+})
+
+router.post('/appreciate/:id', authMiddleware, (req, res) => {
+    try{
+    const userData = req.userData;
+    const appreciate = new Appreciate()
+    appreciate.user = userData.user;
+    appreciate.proviehelp = req.params.id;
+    appreciate.save();
+    res.status(200).send(appreciate);
+    }catch(e){
+        res.staus(500).send(e.toString())
+    }
+})
 
 router.post('/upload', authMiddleware, (req, res) => {
     let sampleFile;
