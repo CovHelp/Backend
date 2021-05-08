@@ -4,6 +4,7 @@ import { User } from "../entity/User";
 const jwt = require('jsonwebtoken');
 
 export const authMiddleware = async (req, res, next) => {
+    console.log("Fetching user...");
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
@@ -21,6 +22,8 @@ export const authMiddleware = async (req, res, next) => {
                 }
             })
             if (userResult.length > 0) {
+                console.log("user found!");
+
                 delete userResult[0].googleId;
                 const tokenVal = userResult[0].token.token;
                 delete userResult[0].token

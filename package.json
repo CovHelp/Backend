@@ -32,7 +32,8 @@
       "reflect-metadata": "^0.1.10",
       "ts-node": "3.3.0",
       "typeorm": "0.2.32",
-      "typescript": "3.3.3333"
+      "typescript": "3.3.3333",
+      "uuid": "^8.3.2"
    },
    "scripts": {
       "start": "nodemon -w src --ext ts --exec ts-node src/index.ts",

@@ -4,7 +4,9 @@ import { NeedHelpLocation } from "../entity/NeedHelpLocation"
 import { ProvideHelp } from "../entity/ProvideHelp"
 import { ProvideHelpLocation } from "../entity/ProvideHelpLocation"
 import { authMiddleware } from '../middlewares/auth'
-import { createNeedHelpPostValidator } from "../validators/post"
+import { createNeedHelpPostValidator, createProvideHelpPostValidator } from "../validators/post"
+import { v4 as uuidv4 } from 'uuid';
+import { Comment } from "../entity/Comment"
 
 var express = require('express')
 var router = express.Router()
@@ -32,6 +34,44 @@ router.get('/need-help-posts', async (req, res) => {
 
         })
         res.send(result)
+    } catch (e) {
+        res.send(e.toString());
+    }
+})
+
+router.post('/need-help-comment', authMiddleware, async(req, res) => {
+    const body = req.body;
+    const userData = req.userData;
+
+    try {
+        const needhelpComment = new Comment();
+        needhelpComment.comment = body.comment;
+        needhelpComment.user = userData.user
+        needhelpComment.needHelp = body.post;
+        needhelpComment.save();
+        res.send(needhelpComment);
+    } catch (e) {
+        res.send(e.toString());
+    }
+})
+
+router.get('/need-help-comments/:id', async (req, res) => {
+    try {
+        const postRepo = getRepository(Comment);
+        const result = await postRepo.find({
+            where: [{ needHelp: req.params.id }],
+            order: {
+                'createdAt': 'DESC',
+            },
+            join: {
+                alias: "comment",
+                leftJoinAndSelect: {
+                    user: "comment.user",
+                }
+            },
+        });
+
+        res.send(result);
     } catch (e) {
         res.send(e.toString());
     }
@@ -137,6 +177,45 @@ router.get('/provide-help-posts', async (req, res) => {
 })
 
 
+router.get('/provide-help-comments/:id', async (req, res) => {
+    try {
+        const postRepo = getRepository(Comment);
+        const result = await postRepo.find({
+            where: [{ provideHelp: req.params.id }],
+            order: {
+                'createdAt': 'DESC',
+            },
+            join: {
+                alias: "comment",
+                leftJoinAndSelect: {
+                    user: "comment.user",
+                }
+            },
+        });
+        res.send(result);
+    } catch (e) {
+        res.send(e.toString());
+    }
+})
+
+
+
+router.post('/provide-help-comment', authMiddleware, async(req, res) => {
+    const body = req.body;
+    const userData = req.userData;
+
+    try {
+        const provideHelpComment = new Comment();
+        provideHelpComment.comment = body.comment;
+        provideHelpComment.user = userData.user
+        provideHelpComment.provideHelp = body.post;
+        provideHelpComment.save();
+        res.send(provideHelpComment);
+    } catch (e) {
+        res.send(e.toString());
+    }
+})
+
 router.get('/provide-help-post/:id', async (req, res) => {
     try {
         const postRepo = getRepository(ProvideHelp);
@@ -182,7 +261,7 @@ router.post('/user-provide-help-posts', authMiddleware, async (req, res) => {
     }
 })
 
-router.post('/create-provide-help-post', authMiddleware, (req, res) => {
+router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostValidator, (req, res) => {
     const body = req.body;
     const userData = req.userData;
 
@@ -216,24 +295,28 @@ router.post('/create-provide-help-post', authMiddleware, (req, res) => {
 });
 
 
-router.post('/upload', function (req, res) {
+router.post('/upload', authMiddleware, (req, res) => {
     let sampleFile;
     let uploadPath;
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
+    const id = uuidv4().toString();
+    console.log("Uploading...");
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-    sampleFile = req.files.sampleFile;
-    uploadPath = __dirname + '../../../uploads/' + sampleFile.name;
+    sampleFile = req.files.file;
+    uploadPath = __dirname + '/uploads/' + id + ".png";
 
     // Use the mv() method to place the file somewhere on your server
     sampleFile.mv(uploadPath, function (err) {
         if (err)
             return res.status(500).send(err);
 
-        res.send('File uploaded!');
+        res.send(id);
     });
+
+    console.log("Uploaded file!");
 });
 
 module.exports = router
