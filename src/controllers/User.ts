@@ -18,7 +18,6 @@ router.get('/@me', authMiddleware, async (req, res, next) => {
 })
 
 router.post('/create-account', createUserValidator, async (req, res) => {
-    console.log("Creating new user record");
     const body = req.body
     const userRepo = getRepository(User);
     const userResult = await userRepo.find({
@@ -32,6 +31,7 @@ router.post('/create-account', createUserValidator, async (req, res) => {
     })
 
     if (userResult.length > 0) {
+        console.log("user found");
 
         delete userResult[0].googleId;
         delete userResult[0].token.createdAt;
@@ -48,6 +48,7 @@ router.post('/create-account', createUserValidator, async (req, res) => {
         res.status(201).send(response);
     } else {
         try {
+            console.log("Creating new user record");
 
             const user = new User();
             user.firstName = body.givenName;
@@ -55,16 +56,26 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             user.email = body.email;
             user.googleId = body.googleId;
             user.profile_pic = body.imageUrl ? body.imageUrl : ' ';
-            user.save();
+            await user.save();
 
             const tok = jwt.sign({ email: body.email, googleId: body.googleId }, process.env.SECRET_KEY);
             const token = new Token()
             token.token = tok;
             token.user = user;
-            token.save()
+            await token.save()
+
+            const userResult = await userRepo.find({
+                where: [{ email: body.email }],
+                join: {
+                    alias: 'user',
+                    leftJoinAndSelect: {
+                        token: 'user.token'
+                    }
+                }
+            })
 
             var userResponse = {
-                id: user.id,
+                id: userResult[0].id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
@@ -72,7 +83,10 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             };
             res.status(201).send({ user: userResponse, token: { token: tok } });
         } catch (e) {
+            console.log(e);
             console.log("LOL");
+            res.status(500).send(e.toString());
+
         }
     }
 })

@@ -57,3 +57,5 @@ router.get('/get-user-channels', authMiddleware, async (req, res) => {
     })
     res.status(200).send(result);
 });
+
+module.exports = router
