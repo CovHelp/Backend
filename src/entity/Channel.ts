@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
 import { Base } from './base/Base';
 import { NeedHelp } from './NeedHelp';
 import { Post } from './base/Post';
@@ -7,19 +7,19 @@ import { User } from './User';
 
 @Entity()
 export class Channel extends Base{
-    @OneToOne(() => User)
+    @ManyToOne(() => User)
     @JoinColumn()
     user1: User;
 
-    @OneToOne(() => User)
+    @ManyToOne(() => User)
     @JoinColumn()
     user2: User;
 
-    @OneToOne(() => ProvideHelp)
+    @ManyToOne(() => ProvideHelp)
     @JoinColumn()
     provideHelp: Post;
 
-    @OneToOne(() => NeedHelp)
+    @ManyToOne(() => NeedHelp)
     @JoinColumn()
     needHelp: Post;
 

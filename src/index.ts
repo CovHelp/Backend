@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 import "reflect-metadata";
 import { createConnection, getRepository } from "typeorm";
 import { Channel } from "./entity/Channel";
+import { Message } from "./entity/Message";
 require('dotenv').config()
 
 
@@ -57,16 +58,36 @@ async function main() {
     io.on('connection', (socket) => { /* socket object may be used to send specific messages to the new connected client */
         console.log('new client connected');
         socket.emit('connection', null);
-        socket.on('channel-join', room => {
+        socket.on('channel-join', async room => {
+            console.log("Joining channel", room);
             socket.join(room);
-            io.to(room).emit('on-message', channel1Messages)
+            const messageRepo = getRepository(Message);
+            const messageResult = await messageRepo.find({
+                order: {
+                    'createdAt': 'DESC',
+                },
+                where: [{channel: room}],
+                join: {
+                    alias: 'message',
+                    leftJoinAndSelect: {
+                        sender: 'message.sender',
+                        channel: 'message.channel'
+                    }
+                }
+            })
+            io.to(room).emit('on-init', messageResult)
         });
         socket.on('channel-leave', room => {
             socket.leave(room);
         })
-        socket.on('send-message', v => {
-            channel1Messages = [...channel1Messages, v.msg]
-            io.to(v.channel).emit('on-message', channel1Messages);
+        socket.on('send-message', async v => {
+            console.log("Saving message for channel: ", v.channel)
+            const message = new Message()
+            message.message = v.msgData.text;
+            message.sender = v.msgData.user;
+            message.channel = v.channel;
+            await message.save();
+            io.to(v.channel).emit('on-message', message);
         })
     });
 }
