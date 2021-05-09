@@ -4,7 +4,11 @@ import { User } from "../entity/User";
 const jwt = require('jsonwebtoken');
 
 export const authMiddleware = async (req, res, next) => {
-    console.log("Fetching user...");
+    if(!req.headers.authorization){
+        res.status(401).json({
+            error: 'User not found'
+        });
+    }
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
@@ -22,7 +26,6 @@ export const authMiddleware = async (req, res, next) => {
                 }
             })
             if (userResult.length > 0) {
-                console.log("user found!");
 
                 delete userResult[0].googleId;
                 const tokenVal = userResult[0].token.token;
@@ -30,7 +33,15 @@ export const authMiddleware = async (req, res, next) => {
                 req.userData = { user: userResult[0], token: tokenVal }
                 next()
 
+            } else {
+                res.status(401).json({
+                    error: 'User not found'
+                });
             }
+        } else {
+            res.status(401).json({
+                error: 'User not found'
+            });
         }
     } catch (e) {
         if (e.name === 'JsonWebTokenError') {

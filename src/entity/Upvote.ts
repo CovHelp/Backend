@@ -10,6 +10,12 @@ export class Upvote extends Base{
     @JoinColumn()
     providehelp: ProvideHelp;
 
+    @Column()
+    userID: number;
+
+    @Column()
+    postID: number;
+
     @ManyToOne(() => User)
     @JoinColumn()
     user: User;

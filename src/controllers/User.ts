@@ -3,7 +3,7 @@ import { createUserValidator } from "../validators/user"
 var jwt = require('jsonwebtoken');
 import { Token } from "../entity/Token"
 import { authMiddleware } from "../middlewares/auth";
-import {  getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 
 var express = require('express')
 var router = express.Router()
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/@me', authMiddleware, async (req, res, next) => {
-   res.status(200).send(req.userData)
+    res.status(200).send(req.userData)
 })
 
 router.post('/create-account', createUserValidator, async (req, res) => {
@@ -30,20 +30,21 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             }
         }
     })
-    
+
     if (userResult.length > 0) {
 
         delete userResult[0].googleId;
         delete userResult[0].token.createdAt;
         delete userResult[0].token.updatedAt;
         var userResponse = {
+            id: userResult[0].id,
             firstName: userResult[0].firstName,
             lastName: userResult[0].lastName,
             email: userResult[0].email,
             profile_pic: userResult[0].profile_pic
-        };  
-        
-        const response = {user: userResponse, token: userResult[0].token};
+        };
+
+        const response = { user: userResponse, token: userResult[0].token };
         res.status(201).send(response);
     } else {
         try {
@@ -63,12 +64,13 @@ router.post('/create-account', createUserValidator, async (req, res) => {
             token.save()
 
             var userResponse = {
+                id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
                 profile_pic: user.profile_pic
-            };            
-            res.status(201).send({ user: userResponse, token: tok });
+            };
+            res.status(201).send({ user: userResponse, token: { token: tok } });
         } catch (e) {
             console.log("LOL");
         }

@@ -37,6 +37,7 @@
    },
    "scripts": {
       "start": "nodemon -w src --ext ts --exec ts-node src/index.ts",
-      "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
+      "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run",
+      "pm2": "pm2 start ts-node -- -P tsconfig.json ./src/index.ts"
    }
 }

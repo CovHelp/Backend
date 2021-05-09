@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm"
+import { getConnection, getRepository } from "typeorm"
 import { NeedHelp } from "../entity/NeedHelp"
 import { NeedHelpLocation } from "../entity/NeedHelpLocation"
 import { ProvideHelp } from "../entity/ProvideHelp"
@@ -41,7 +41,7 @@ router.get('/need-help-posts', async (req, res) => {
     }
 })
 
-router.post('/need-help-comment', authMiddleware, async(req, res) => {
+router.post('/need-help-comment', authMiddleware, async (req, res) => {
     const body = req.body;
     const userData = req.userData;
 
@@ -209,7 +209,7 @@ router.get('/provide-help-comments/:id', async (req, res) => {
 
 
 
-router.post('/provide-help-comment', authMiddleware, async(req, res) => {
+router.post('/provide-help-comment', authMiddleware, async (req, res) => {
     const body = req.body;
     const userData = req.userData;
 
@@ -236,7 +236,8 @@ router.get('/provide-help-post/:id', async (req, res) => {
                     user: "providehelp.user",
                     comments: "providehelp.comments",
                     upvotes: "providehelp.upvotes",
-                    appreciations: "providehelp.appreciations"
+                    appreciations: "providehelp.appreciations",
+                    locations: "providehelp.locations"
                 }
             }
         });
@@ -264,6 +265,7 @@ router.post('/user-provide-help-posts', authMiddleware, async (req, res) => {
                 }
             }
         })
+
         res.send(result)
     } catch (e) {
         res.send(e.toString());
@@ -305,27 +307,48 @@ router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostVa
 
 
 router.post('/upvote/:id', authMiddleware, (req, res) => {
-    try{
-    const userData = req.userData;
-    const upvote = new Upvote()
-    upvote.user = userData.user;
-    upvote.providehelp = req.params.id;
-    upvote.save();
-    res.status(200).send(upvote);
-    }catch(e){
+    try {
+        const userData = req.userData;
+        const upvote = new Upvote()
+        upvote.user = userData.user;
+        upvote.providehelp = req.params.id;
+        upvote.userID = req.body.userID;
+        upvote.postID = parseInt(req.params.id);
+        upvote.save();
+        res.status(200).send(upvote);
+    } catch (e) {
         res.staus(500).send(e.toString())
     }
 })
 
+router.post('/devote/:id', authMiddleware, async (req, res) => {
+    try {
+        const upvoteRepo = getRepository(Upvote);
+        const result = await upvoteRepo.find({
+            where: [{ userID: req.body.userID }, { providehelp: parseInt(req.params.id) }],
+
+        })
+
+
+        if (result.length > 0) {
+            await result[0].remove();
+        }
+        res.status(201).send("Done")
+
+    } catch (e) {
+        res.status(500).send(e.toString())
+    }
+})
+
 router.post('/appreciate/:id', authMiddleware, (req, res) => {
-    try{
-    const userData = req.userData;
-    const appreciate = new Appreciate()
-    appreciate.user = userData.user;
-    appreciate.proviehelp = req.params.id;
-    appreciate.save();
-    res.status(200).send(appreciate);
-    }catch(e){
+    try {
+        const userData = req.userData;
+        const appreciate = new Appreciate()
+        appreciate.user = userData.user;
+        appreciate.proviehelp = req.params.id;
+        appreciate.save();
+        res.status(200).send(appreciate);
+    } catch (e) {
         res.staus(500).send(e.toString())
     }
 })
@@ -337,7 +360,6 @@ router.post('/upload', authMiddleware, (req, res) => {
         return res.status(400).send('No files were uploaded.');
     }
     const id = uuidv4().toString();
-    console.log("Uploading...");
 
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     sampleFile = req.files.file;
@@ -353,6 +375,13 @@ router.post('/upload', authMiddleware, (req, res) => {
 
     console.log("Uploaded file!");
 });
+
+
+router.get('/file/:id', (req, res) => {
+    console.log("Fetching file", req.params.id)
+    var file = __dirname + '/uploads/' + req.params.id + '.png';
+    res.sendFile(file);
+})
 
 module.exports = router
 
