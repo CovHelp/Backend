@@ -64,7 +64,7 @@ async function main() {
             const messageRepo = getRepository(Message);
             const messageResult = await messageRepo.find({
                 order: {
-                    'createdAt': 'DESC',
+                    'createdAt': 'ASC',
                 },
                 where: [{channel: room}],
                 join: {

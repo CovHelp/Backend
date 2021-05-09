@@ -30,6 +30,7 @@
       "nodemon": "^2.0.7",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.10",
+      "socket.io": "^4.0.2",
       "ts-node": "3.3.0",
       "typeorm": "0.2.32",
       "typescript": "3.3.3333",
