@@ -47,7 +47,7 @@ router.post('/create-provide-channel', authMiddleware, async (req, res) => {
         channel.user1 = userData.user.id;
         channel.user2 = user2ID;
         channel.postType = 1
-        channel.needHelp = postID;
+        channel.provideHelp = postID;
         channel.save();
         res.status(200).send(channel);
     } else {
