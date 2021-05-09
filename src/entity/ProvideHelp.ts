@@ -5,6 +5,7 @@ import { Post } from "./base/Post";
 import { Upvote } from "./Upvote";
 import { User } from "./User";
 import { ProvideHelpLocation } from "./ProvideHelpLocation";
+import { Channel } from "./Channel";
 
 
 @Entity()

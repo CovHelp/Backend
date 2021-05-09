@@ -3,6 +3,7 @@ import { Comment } from "./Comment";
 import { Post } from "./base/Post";
 import { User } from "./User";
 import { NeedHelpLocation } from "./NeedHelpLocation";
+import { Channel } from "./Channel";
 
 
 @Entity()
@@ -18,4 +19,5 @@ export class NeedHelp extends Post {
     @OneToOne(() => NeedHelpLocation, needHelpLocation => needHelpLocation.needHelpPost)
     @JoinColumn()
     location: NeedHelpLocation;
+
 }
