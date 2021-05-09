@@ -312,9 +312,12 @@ router.post('/upvote/:id', authMiddleware, async (req, res) => {
         const upvoteRepo = getRepository(Upvote);
 
         const result = await upvoteRepo.find({
-            where: [{ userID: req.body.userID }, { providehelp: parseInt(req.params.id) }],
+            where: 
+                { userID: parseInt(req.body.userID), postID: parseInt(req.params.id) }, 
+            
 
         })
+        console.log(result);
         if (result.length > 0) {
             res.status(201).send("Done")
 
@@ -336,7 +339,8 @@ router.post('/devote/:id', authMiddleware, async (req, res) => {
     try {
         const upvoteRepo = getRepository(Upvote);
         const result = await upvoteRepo.find({
-            where: [{ userID: req.body.userID }, { providehelp: parseInt(req.params.id) }],
+            where: 
+            { userID: parseInt(req.body.userID), postID: parseInt(req.params.id) }, 
 
         })
 
