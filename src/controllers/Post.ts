@@ -306,16 +306,27 @@ router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostVa
 });
 
 
-router.post('/upvote/:id', authMiddleware, (req, res) => {
+router.post('/upvote/:id', authMiddleware, async (req, res) => {
     try {
         const userData = req.userData;
-        const upvote = new Upvote()
-        upvote.user = userData.user;
-        upvote.providehelp = req.params.id;
-        upvote.userID = req.body.userID;
-        upvote.postID = parseInt(req.params.id);
-        upvote.save();
-        res.status(200).send(upvote);
+        const upvoteRepo = getRepository(Upvote);
+
+        const result = await upvoteRepo.find({
+            where: [{ userID: req.body.userID }, { providehelp: parseInt(req.params.id) }],
+
+        })
+        if (result.length > 0) {
+            res.status(201).send("Done")
+
+        } else {
+            const upvote = new Upvote()
+            upvote.user = userData.user;
+            upvote.providehelp = req.params.id;
+            upvote.userID = req.body.userID;
+            upvote.postID = parseInt(req.params.id);
+            upvote.save();
+            res.status(200).send(upvote);
+        }
     } catch (e) {
         res.staus(500).send(e.toString())
     }
