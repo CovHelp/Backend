@@ -35,8 +35,8 @@ router.post('/create-need-channel', authMiddleware, async (req, res) => {
                         postType: 0,
                         url: 'https://covhelp.online/chat',
                         postID: postID,
-                        title: `${channel.user1.firstName} created a channel to help you!`,
-                        body: `You got a help on ${channel.needHelp.body} post`
+                        title: `Someone wants to help you!`,
+                        body: `You got a help on one of your posts!`
                     })
                 })
             }
@@ -81,7 +81,7 @@ router.post('/create-provide-channel', authMiddleware, async (req, res) => {
                         postType: 1,
                         url: 'https://covhelp.online/chat',
                         postID: postID,
-                        title: `Someone needs your help!`,
+                        title: `Someone wants your help`,
                         body: `You got a help request on one of your posts`
                     })
                 })

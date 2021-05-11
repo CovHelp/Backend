@@ -24,6 +24,7 @@ router.get('/need-help-posts', async (req, res) => {
     try {
         const postRepo = getRepository(NeedHelp);
         const result = await postRepo.find({
+            where: {isClosed: false},
             order: {
                 'createdAt': 'DESC',
             },
@@ -203,6 +204,7 @@ router.get('/provide-help-posts', async (req, res) => {
     try {
         const postRepo = getRepository(ProvideHelp);
         const result = await postRepo.find({
+            where: {isClosed: false},
             order: {
                 'createdAt': 'DESC',
             },
