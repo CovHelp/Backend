@@ -17,11 +17,11 @@ export class Channel extends Base{
 
     @ManyToOne(() => ProvideHelp)
     @JoinColumn()
-    provideHelp: Post;
+    provideHelp: ProvideHelp;
 
     @ManyToOne(() => NeedHelp)
     @JoinColumn()
-    needHelp: Post;
+    needHelp: NeedHelp;
 
     @Column()
     postType: number;

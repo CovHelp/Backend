@@ -8,6 +8,7 @@ import "reflect-metadata";
 import { createConnection, getRepository } from "typeorm";
 import { Channel } from "./entity/Channel";
 import { Message } from "./entity/Message";
+import { getDeviceTokensByUserID, getUsersByChannelID, sendNotification } from "./utils/notifier";
 require('dotenv').config()
 
 
@@ -66,7 +67,7 @@ async function main() {
                 order: {
                     'createdAt': 'ASC',
                 },
-                where: [{channel: room}],
+                where: [{ channel: room }],
                 join: {
                     alias: 'message',
                     leftJoinAndSelect: {
@@ -88,6 +89,46 @@ async function main() {
             message.channel = v.channel;
             await message.save();
             io.to(v.channel).emit('on-message', message);
+
+            const channelRepo = getRepository(Channel);
+            const channel = await channelRepo.findOne({
+                where: {id: v.channel}
+            })
+
+            if(channel){
+                channel.updatedAt = new Date()
+                await channel.save()
+            }
+
+            // notification handler
+            const users = await getUsersByChannelID(v.channel);
+            if (users) {
+                if (users.user1.id != v.msgData.user) {
+                    const deviceTokens = await getDeviceTokensByUserID(users.user1.id)
+                    if (deviceTokens.length > 0) {
+                        deviceTokens.forEach(async v => {
+                            await sendNotification(v, {
+                                url: 'https://covhelp.online/chat',
+                                title: `${users.user2.firstName} sent you a message`,
+                                body: `${message.message}`
+                            })
+                        })
+                    }
+                }
+
+                else if (users.user2.id != v.msgData.user) {
+                    const deviceTokens = await getDeviceTokensByUserID(users.user2.id)
+                    if (deviceTokens.length > 0) {
+                        deviceTokens.forEach(async v => {
+                            await sendNotification(v, {
+                                url: 'https://covhelp.online/chat',
+                                title: `${users.user1.firstName} sent you a message`,
+                                body: `${message.message}`
+                            })
+                        })
+                    }
+                }
+            }
         })
     });
 }

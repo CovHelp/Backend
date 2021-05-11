@@ -1,6 +1,7 @@
 import axios from "axios"
 import { getRepository } from "typeorm";
 import { Post } from "../entity/base/Post";
+import { Channel } from "../entity/Channel";
 import { DeviceToken } from "../entity/DeviceTokens";
 import { NeedHelp } from "../entity/NeedHelp";
 import { ProvideHelp } from "../entity/ProvideHelp";
@@ -63,4 +64,31 @@ export const getDeviceTokensByProvidePostID = async (postID) => {
         return deviceTokenResult.map(tok => tok.token)
     else
         return null;
+}
+
+export const getDeviceTokensByUserID = async (userID) => {
+    const deviceTokenRepo = getRepository(DeviceToken);
+    const deviceTokenResult = await deviceTokenRepo.find({
+        where: [{ user: userID }]
+    })
+    if (deviceTokenResult.length > 0)
+        return deviceTokenResult.map(tok => tok.token)
+    else
+        return null;
+}
+
+export const getUsersByChannelID = async (channelID) => {
+    const channelRepo = getRepository(Channel);
+    const channelResult = await channelRepo.findOne({
+        where: {id: channelID},
+        join: {
+            alias: 'channel',
+            leftJoinAndSelect: {
+                user1: 'channel.user1',
+                user2: 'channel.user2'
+            }
+        }
+    })
+    
+    return channelResult;
 }

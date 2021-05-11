@@ -62,6 +62,7 @@ router.post('/need-help-comment', authMiddleware, async (req, res) => {
 
                     await sendNotification(v, {
                         title: 'New comment',
+                        url: `https://covhelp.online/post-detail/0/${body.post}`,
                         body: `${userData.user.firstName} commented on your post!`
                     });
                 })
@@ -242,6 +243,7 @@ router.post('/provide-help-comment', authMiddleware, async (req, res) => {
                 deviceTokens.forEach(async v => {
                     await sendNotification(v, {
                         title: 'New comment',
+                        url: `https://covhelp.online/post-detail/1/${body.post}`,
                         body: `${userData.user.firstName} commented on your post!`
                     });
                 })
