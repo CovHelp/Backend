@@ -43,6 +43,28 @@ router.get('/need-help-posts', async (req, res) => {
     }
 })
 
+router.post('/need-help-close', authMiddleware, async (req, res) => {
+    const body = req.body;
+    const userData = req.userData;
+
+    try {
+        const needHelpRepo = getRepository(NeedHelp);
+        const needHelpPost = await needHelpRepo.findOne({
+            where: { id: body.postID, user: userData.user.id }
+        })
+
+        if (needHelpPost) {
+            needHelpPost.isClosed = true;
+            await needHelpPost.save()
+        }
+
+        res.status(201).send('Post closed');
+    } catch (e) {
+        res.status(500).send(e.toString());
+
+    }
+})
+
 router.post('/need-help-comment', authMiddleware, async (req, res) => {
     const body = req.body;
     const userData = req.userData;
@@ -334,6 +356,28 @@ router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostVa
     res.status(200).send(provideHelp);
 });
 
+
+router.post('/provide-help-close', authMiddleware, async (req, res) => {
+    const body = req.body;
+    const userData = req.userData;
+
+    try {
+        const provideHelpRepo = getRepository(ProvideHelp);
+        const provideHelpPost = await provideHelpRepo.findOne({
+            where: { id: body.postID, user: userData.user.id }
+        })
+
+        if (provideHelpPost) {
+            provideHelpPost.isClosed = true;
+            await provideHelpPost.save()
+        }
+
+        res.status(201).send('Post closed');
+    } catch (e) {
+        res.status(500).send(e.toString());
+
+    }
+})
 
 router.post('/upvote/:id', authMiddleware, async (req, res) => {
     try {
