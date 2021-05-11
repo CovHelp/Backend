@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Comment } from "../entity/Comment"
 import { Upvote } from "../entity/Upvote"
 import { Appreciate } from "../entity/Appreciate"
+import { getDeviceTokensByNeedPostID, getDeviceTokensByProvidePostID, sendNotification } from "../utils/notifier"
+import { getDefaultLibFilePath } from "typescript"
 
 var express = require('express')
 var router = express.Router()
@@ -50,8 +52,21 @@ router.post('/need-help-comment', authMiddleware, async (req, res) => {
         needhelpComment.comment = body.comment;
         needhelpComment.user = userData.user
         needhelpComment.needHelp = body.post;
-        needhelpComment.save();
+        await needhelpComment.save();
         res.send(needhelpComment);
+
+        try {
+            const deviceTokens = await getDeviceTokensByNeedPostID(body.post);
+            if (deviceTokens !== null) {
+                deviceTokens.forEach(async v => {
+
+                    await sendNotification(v, {
+                        title: 'New comment',
+                        body: `${userData.user.firstName} commented on your post!`
+                    });
+                })
+            }
+        } catch (e) { }
     } catch (e) {
         res.send(e.toString());
     }
@@ -220,6 +235,18 @@ router.post('/provide-help-comment', authMiddleware, async (req, res) => {
         provideHelpComment.provideHelp = body.post;
         provideHelpComment.save();
         res.send(provideHelpComment);
+
+        try {
+            const deviceTokens = await getDeviceTokensByProvidePostID(body.post);
+            if (deviceTokens !== null) {
+                deviceTokens.forEach(async v => {
+                    await sendNotification(v, {
+                        title: 'New comment',
+                        body: `${userData.user.firstName} commented on your post!`
+                    });
+                })
+            }
+        } catch (e) { }
     } catch (e) {
         res.send(e.toString());
     }
@@ -312,9 +339,9 @@ router.post('/upvote/:id', authMiddleware, async (req, res) => {
         const upvoteRepo = getRepository(Upvote);
 
         const result = await upvoteRepo.find({
-            where: 
-                { userID: parseInt(req.body.userID), postID: parseInt(req.params.id) }, 
-            
+            where:
+                { userID: parseInt(req.body.userID), postID: parseInt(req.params.id) },
+
 
         })
         console.log(result);
@@ -339,8 +366,8 @@ router.post('/devote/:id', authMiddleware, async (req, res) => {
     try {
         const upvoteRepo = getRepository(Upvote);
         const result = await upvoteRepo.find({
-            where: 
-            { userID: parseInt(req.body.userID), postID: parseInt(req.params.id) }, 
+            where:
+                { userID: parseInt(req.body.userID), postID: parseInt(req.params.id) },
 
         })
 

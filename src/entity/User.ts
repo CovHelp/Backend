@@ -6,6 +6,7 @@ import { Post } from "./base/Post";
 import { ProvideHelp } from "./ProvideHelp";
 import { Token } from "./Token";
 import { isEmail } from "class-validator";
+import { DeviceToken } from "./DeviceTokens";
 
 @Entity({name: 'users'})
 export class User extends Base {
@@ -23,6 +24,9 @@ export class User extends Base {
 
     @Column()
     profile_pic: string;
+
+    @OneToMany(()=>DeviceToken, deviceToken => deviceToken.user)
+    deviceTokens: DeviceToken
 
     @OneToOne(() => Token, token => token.user)
     token: Token;

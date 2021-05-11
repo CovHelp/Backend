@@ -4,6 +4,7 @@ var jwt = require('jsonwebtoken');
 import { Token } from "../entity/Token"
 import { authMiddleware } from "../middlewares/auth";
 import { getRepository } from "typeorm";
+import { DeviceToken } from "../entity/DeviceTokens";
 
 var express = require('express')
 var router = express.Router()
@@ -89,6 +90,19 @@ router.post('/create-account', createUserValidator, async (req, res) => {
 
         }
     }
+})
+
+
+router.post('/update-device-token', authMiddleware, async (req, res) => {
+    const body = req.body;
+    const userData = req.userData;
+    const deviceToken = new DeviceToken()
+    deviceToken.token = body.deviceToken;
+    deviceToken.user = userData.user;
+    try {
+        await deviceToken.save()
+    } catch (e) { }
+    res.status(201).send('Device token added')
 })
 
 
