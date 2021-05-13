@@ -2,14 +2,12 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne
 import { Base } from './base/Base';
 import { User } from './User';
 import { Channel } from './Channel';
+import { OrganizationLocation } from './OrganizationLocation';
 
 @Entity()
 export class Organization extends Base{
     @Column()
-    firstName: string;
-
-    @Column()
-    lastName: string;
+    name: string;
 
     @Column({default: false})
     isVisible: boolean;
@@ -26,12 +24,17 @@ export class Organization extends Base{
     @Column()
     website: string;
 
-    @Column()
-    howtoavail: string;
-
     @Column("text", {array: true})
     category: string[]
 
     @Column()
     donation: string;
+
+    @ManyToOne(()=>User)
+    @JoinColumn()
+    user: User
+
+    @OneToMany(() => OrganizationLocation, organizationLocation => organizationLocation.organization)
+    @JoinColumn()
+    locations: OrganizationLocation
 }
