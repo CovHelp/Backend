@@ -174,7 +174,7 @@ router.post('/create-need-help-post', authMiddleware, createNeedHelpPostValidato
     location.lat = body.lat;
     location.long = body.long;
     location.country = "IN";
-    location.save()
+    await location.save()
 
     const needHelp = new NeedHelp()
     needHelp.body = body.body;
@@ -189,7 +189,7 @@ router.post('/create-need-help-post', authMiddleware, createNeedHelpPostValidato
     needHelp.location = location;
     needHelp.user = userData.user;
 
-    needHelp.save()
+    await needHelp.save()
     res.status(200).send(needHelp);
 })
 
@@ -249,7 +249,7 @@ router.get('/provide-help-comments/:id', async (req, res) => {
 
 
 
-router.post('/provide-help-comment', authMiddleware, async (req, res) => {
+router.post('/provide-help-comment', authMiddleware,  async (req, res) => {
     const body = req.body;
     const userData = req.userData;
 
@@ -258,7 +258,7 @@ router.post('/provide-help-comment', authMiddleware, async (req, res) => {
         provideHelpComment.comment = body.comment;
         provideHelpComment.user = userData.user
         provideHelpComment.provideHelp = body.post;
-        provideHelpComment.save();
+        await provideHelpComment.save();
         res.send(provideHelpComment);
 
         try {
@@ -325,7 +325,7 @@ router.post('/user-provide-help-posts', authMiddleware, async (req, res) => {
     }
 })
 
-router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostValidator, (req, res) => {
+router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostValidator, async (req, res) => {
     const body = req.body;
     const userData = req.userData;
 
@@ -341,7 +341,7 @@ router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostVa
     // setting relationship
     provideHelp.user = userData.user;
 
-    provideHelp.save()
+    await provideHelp.save()
 
     for (var i = 0; i < body.locations.length; i++) {
         const location = new ProvideHelpLocation()
@@ -351,7 +351,7 @@ router.post('/create-provide-help-post', authMiddleware, createProvideHelpPostVa
         location.long = body.locations[i].city.longitude;
         location.country = "IN";
         location.provideHelp = provideHelp;
-        location.save()
+        await location.save()
     }
 
 
@@ -402,7 +402,7 @@ router.post('/upvote/:id', authMiddleware, async (req, res) => {
             upvote.providehelp = req.params.id;
             upvote.userID = req.body.userID;
             upvote.postID = parseInt(req.params.id);
-            upvote.save();
+            await upvote.save();
             res.status(200).send(upvote);
         }
     } catch (e) {
@@ -430,13 +430,13 @@ router.post('/devote/:id', authMiddleware, async (req, res) => {
     }
 })
 
-router.post('/appreciate/:id', authMiddleware, (req, res) => {
+router.post('/appreciate/:id', authMiddleware, async (req, res) => {
     try {
         const userData = req.userData;
         const appreciate = new Appreciate()
         appreciate.user = userData.user;
         appreciate.proviehelp = req.params.id;
-        appreciate.save();
+        await appreciate.save();
         res.status(200).send(appreciate);
     } catch (e) {
         res.staus(500).send(e.toString())
